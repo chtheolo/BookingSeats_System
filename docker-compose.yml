@@ -1,0 +1,21 @@
+version: "3"
+services: 
+  app:
+    container_name: booking
+    restart: always
+    volumes: 
+      - ".:/usr/src/booking:rw"
+    # command: "npm run dev:watch"
+    build: .
+    ports: 
+      - "4001:4001"
+    links: 
+      - mongo
+    # depends_on:
+      # -mongo
+  mongo:
+    container_name: mongo_booking
+    restart: always
+    image: mongo
+    ports: 
+      - "27018:27018"
