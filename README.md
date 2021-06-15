@@ -7,6 +7,8 @@ This is a personal project in which it is implemented a REST API service, writte
 * [Example](#example)
 	* [User Registration](#registration)
 	* [User Login](#login)
+	* [Sessions Schema](#schema)
+
 
 <a name="installation"></a>
 ## Installation
@@ -71,9 +73,64 @@ To make a user login you should make a **post** request at the *localhost:4001/a
 
 ```json
 {
-    "email": "chtheolo@gmail.com",
-    "password": "1234"
+    "email": "email@email.com",
+    "password": "your-password"
 }
 ```
-The API in this case will repond with the same answer as we saw in the [**registration**](#registration).
+The API in this case will repond with the same answer as we saw in the [**registration**](#registration) but with a different success message:
 
+```json
+{
+    "message": "Login successful",
+    "token": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGM4ZmQ0YmVhZGRhZDAwMjA2ZDcwMTciLCJ1c2VybmFtZSI6InRoZW9sb2dvdSIsImVtYWlsIjoidGhlb2xvZ291QGdtYWlsLmNvbSIsInJvbGUiOiJNZW1iZXIiLCJpYXQiOjE2MjM3OTI0NzcsImV4cCI6MTY1NTMyODQ3N30.XKbNU2DgOjyiqh67gsWPVciPWFh2kfcfXlAoP_DkQYI",
+    "user": {
+        "_id": "60c8fd4beaddad00206d7017",
+        "username": "your-username",
+        "email": "email@email.com",
+        "role": "Member"
+    }
+}
+```
+
+<a name="schema"></a>
+### Sessions Schema
+This is a reservation-based schema where the user can pick their own seats in a  day session, and the seats are reserved until the user either checks out the cart or the cart expires. 
+
+| Schema Attribute | Description |
+|-----------------|:-------------|
+| name            | Name of the shop |
+| price           | The reservation price |
+| seatsAvailable  | The number of seats left for that day session |
+| seats           | The 2d array seat map, showing which seats have been booked |
+| reservations    | Any current reservations for this session that are in a cart |
+
+The most interesting field is the **seats** field, which contains the map of the shop/restaurant. It’s worth noticing that although we have picked a completely uniform seat layout, this schema would allow us to create any layout we wish.
+
+Making a **GET** request in the endpoint *localhost:4001/sessions* we can get the history of all sessions and the API respose will be:
+
+```json
+{
+    "_id": "60c91ec72c1cfa0020df364a",
+    "name": "Shop-Restaurant",
+    "price": 9,
+    "seatsAvailable": 113,
+    "seats": [
+        [ 0, 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "reservations": [],
+    "createdAt": "2021-06-15T21:42:31.171Z",
+    "updatedAt": "2021-06-15T21:42:31.171Z",
+    "__v": 0
+}
+```
+
+We can also fetch sessions by date and Id:
+* Date -> localhost:4001/sessions?date=2020-07-19
+* Id   -> localhost:4002/sessions/5f22cfbf5f8e9f0f761699bc
+
+Notice that the **seats** field mirrors the seating layout. In a session, it’s used to keep track of what seats have been reserved. The reservations array is an array of current reservations for these sessions before the carts have been checked out.
