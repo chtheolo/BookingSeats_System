@@ -8,6 +8,7 @@ This is a personal project in which it is implemented a REST API service, writte
 	* [User Registration](#registration)
 	* [User Login](#login)
 	* [Sessions Schema](#schema)
+	* [Cart](#cart)
 
 
 <a name="installation"></a>
@@ -134,3 +135,36 @@ We can also fetch sessions by date and Id:
 * Id   -> localhost:4002/sessions/5f22cfbf5f8e9f0f761699bc
 
 Notice that the **seats** field mirrors the seating layout. In a session, it’s used to keep track of what seats have been reserved. The reservations array is an array of current reservations for these sessions before the carts have been checked out.
+
+
+<a name="cart"></a>
+### Cart
+
+The shopping **cart** is fairly straight forward. Let’s look at an example cart with a single reservation.
+
+```json
+{
+    "state": "inactive",
+    "_id": "60c8fd4beaddad00206d7018",
+    "owner": "60c8fd4beaddad00206d7017",
+    "total": 0,
+    "reservations": [ {
+        "sessionId" : ObjectId("5500632d2dc02be024ba5c66"),
+        "seats" : [ [ 1, 5 ], [ 1, 6 ], [ 1, 7 ] ],
+        "price" : 9,
+        "total" : 27,
+    } ],
+    "createdAt": "2021-06-15T19:19:39.362Z",
+    "updatedAt": "2021-06-15T19:19:39.362Z",
+    "__v": 0 
+}
+```
+
+| Schema Attribute | Description |
+|-----------------|:-------------|
+| state           | The current state of the cart, one of active, inactive|
+| owner           | The user who owns that cart |
+| total           | The total price of the cart |
+| reservations    | An array of reservation documents for sessions. Each document includes the sessionId, the seats reserved, the price per seat and the total for that reservation|
+
+The most interesting field here is the **reservations** field, which contains all the current reservations for the cart. Each reservation is for a specific daysession .
