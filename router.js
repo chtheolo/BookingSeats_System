@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
-// const passportService = require('./config/passport');
+const passportService = require('./config/passport');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single('image');
