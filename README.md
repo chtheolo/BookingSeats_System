@@ -1,6 +1,11 @@
 # Booking Seats System
 This is a personal project in which it is implemented a REST API service, written in Javascript for Node.js, Express.js framework, MongoDB and Docker containers in order to make seats reservations.
 
+[![GitHub issues](https://img.shields.io/github/issues/chtheolo/BookingSeats_System)](https://github.com/chtheolo/BookingSeats_System/issues)
+[![GitHub license](https://img.shields.io/github/license/chtheolo/BookingSeats_System)](https://github.com/chtheolo/BookingSeats_System)
+[![GitHub forks](https://img.shields.io/github/forks/chtheolo/BookingSeats_System)](https://github.com/chtheolo/BookingSeats_System/network)
+[![GitHub stars](https://img.shields.io/github/stars/chtheolo/BookingSeats_System)](https://github.com/chtheolo/BookingSeats_System/stargazers)
+
 ## Contents
 * [Installation](#installation)
 * [How to run](#how-to-run)
