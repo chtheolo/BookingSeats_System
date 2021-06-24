@@ -116,41 +116,24 @@ exports.fetch = function(req,res){
 }
 
 /* ---------------------------- DELETE ---------------------------------*/
-exports.delete = function(req,res, next){
-	console.log(req.params.cId);
-	
+exports.delete = function(req, res, next){
 	if (req.params.cId) {
-		var sessions = Sessions.find({"reservations._id": { "$eq": req.params.cId} })
+		Sessions.find({"reservations._id": { "$eq": req.params.cId} })
 			.exec(function(error, session){
 				if (error) {
 					console.log(error);
 				}
-				console.log(session)
 				if (session.length != 0) {
-
-					var d = session[0].date;
-					console.log("date:");
-					console.log(d);
-
 					var setSeatsSelection = {};
-					console.log(session[0].reservations)
 
 					session[0].reservations.forEach(element => {
-						console.log("Element:")
-						console.log(element)
 						if(element._id == req.params.cId) {
-
-							console.log("seats:");
-							console.log(element.seats);
-
 							for (let i = 0; i<element.seats.length; i++) {
 								setSeatsSelection['seats.' + element.seats[i][0] + '.' + element.seats[i][1]] = 0;
 							}
-							console.log("setSeatsSelection:");
-							console.log(setSeatsSelection);
 
-							Sessions.update({
-								date: d
+							Sessions.updateOne({
+								date: session[0].date
 							},{
 								$set: setSeatsSelection,
 								$inc: { seatsAvailable: +element.seats.length },
@@ -162,6 +145,7 @@ exports.delete = function(req,res, next){
 							},function(error, session){
 								if (error) {
 									console.log(error);
+									return;
 								}
 								console.log(session);
 								return;
@@ -252,12 +236,8 @@ exports.delete = function(req,res, next){
 
 /* ---------------------------- BOOK ---------------------------------*/
 exports.book = function(req, res) {
-	console.log(req.user._id);
 	var seatsQuery = [];
 	var setSeatsSelection = {};
-
-	// var sessions = getSiblingDB("ebooking_development").sessions;
-	// var session = sessions.find({ "date": { "eq": req.body.date } });
 
 	var sessions = Sessions.find({ "date": { "$eq": req.body.date } });
 	sessions
@@ -278,8 +258,8 @@ exports.book = function(req, res) {
 			setSeatsSelection[seatSelection] = 1;
 		}
 
-		// var result = sessions.update({
-		sessions.update({
+		// sessions.update({
+		sessions.updateOne({
 			date: req.body.date,
 			$and: seatsQuery,
 		}, { 
@@ -287,7 +267,6 @@ exports.book = function(req, res) {
 			$inc: { seatsAvailable: -req.body.seats.length },
 			$push: {
 				reservations: {
-					//_id: cartid,
 					seats: req.body.seats,
 					price: session[0].price,
 					total: session[0].price * req.body.seats.length
@@ -297,26 +276,22 @@ exports.book = function(req, res) {
 			if(error) {
 				return res.status(422).send(error);
 			}
-			else {
-				console.log("result:")
-				console.log(result);
 
-				if (result.nModified == 0) {
-					return res.json({
-						message: "Reservation request could not accepted."
-					});
-				}
-				else if (result.nModified == 1) {
-					Sessions
-						.find({"date": { "$eq": req.body.date } })
-						.exec(function(error, s){
-							Cart.update(s, req.body.seats ,req.user._id);
-						})
+			if (result.nModified == 0) {
+				return res.json({
+					message: "Reservation request could not accepted."
+				});
+			}
+			else if (result.nModified == 1) {
+				Sessions
+					.find({"date": { "$eq": req.body.date } })
+					.exec(function(error, s){
+						Cart.update(s, req.body.seats ,req.user._id);
+					})
 
-					return res.status(200).json({
-						message: "Reservation request was accepted."
-					});
-				}
+				return res.status(200).json({
+					message: "Reservation request was accepted."
+				});
 			}
 		})
 	})
