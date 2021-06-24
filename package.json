@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "./node_modules/nodemon/bin/nodemon.js server.js",
+    "start": "sudo docker-compose up --build",
     "prod": "NODE_ENV=production ./node_modules/nodemon/bin/nodemon.js server.js",
     "test": "find ./ -name '*spec.js' | xargs mocha -R spec --exit"
   },
