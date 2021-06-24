@@ -29,9 +29,7 @@ exports.create = function(req, res) {
 exports.update = function(session, seats, user_id) { 
     var pos = session[0].reservations.length;
 
-    console.log(session[0].reservations[pos-1]._id);
-    
-    Cart.update({
+    Cart.updateOne({
         owner: user_id,
     },{
         $push: {
@@ -76,32 +74,29 @@ exports.fetch = function(req, res) {
 /* ---------------------------- DELETE ---------------------------------*/
 exports.delete = function(req, res, next) {
     if (req.params.cId) {
-        var cartId = req.params.cId;
-        console.log(cartId);
-
-        var cart = Cart.find({"reservations" : { "$elemMatch": { cart_id: cartId } } })
-        cart
+        Cart.find({"reservations" : { "$elemMatch": { "cart_id": req.params.cId} } })
             .exec(function(error, carts){
                 if (error) {
                     console.log(error);
                 }
                 var elementPrice;
                 carts[0].reservations.forEach(element => {
-                   if(element.cart_id == cartId)  {
+
+                   if(element.cart_id == req.params.cId)  {
                        elementPrice = element.total;
                    }
                 });
 
-                cart.update({
+                Cart.updateOne({
                     owner: req.user._id
                 },{
                     $inc: { total: -elementPrice},
                     $pull: {
                         reservations: {
-                            cart_id: cartId
+                            cart_id: req.params.cId
                         }
                     }
-                },function(error, cart){
+                },function(error, c){
                     if (error) {
                         return res.status(422).send(error);
                     }
@@ -143,7 +138,9 @@ exports.delete = function(req, res, next) {
                         console.log(error);
                     }
                     console.log("Delete reservation from cart!");
-                    return;
+                    return res.status(200).json({
+                        message: "Deleted!"
+                    });
                 }) 
             }) 
     }
