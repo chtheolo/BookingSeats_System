@@ -7,7 +7,7 @@ const Sessions = require('../session/model');
 exports.create = function(req, res) {
 
     let cart = new Cart({
-        owner: req._id,
+        owner: res.locals.user._id,
         state: "inactive",
         total: 0,
         reservations: []
