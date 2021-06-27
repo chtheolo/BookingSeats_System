@@ -69,7 +69,6 @@ module.exports = function (app) {
 	routes.auth
 		.post('/register', controllers.auth.register)//, controllers.cart.create)
 		.post('/login', requireLogin, controllers.auth.login)
-		.get('/protected', requireAuth, controllers.auth.testroute)
 
 
 	/* 		cart			*/
