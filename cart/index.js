@@ -5,10 +5,8 @@ const Sessions = require('../session/model');
 
 /* ---------------------------- CREATE ---------------------------------*/
 exports.create = function(req, res) {
-    console.log("CREATE");
-    console.log(req._id);
 
-    var cart = new Cart({
+    let cart = new Cart({
         owner: req._id,
         state: "inactive",
         total: 0,
@@ -106,43 +104,6 @@ exports.delete = function(req, res, next) {
                     return next();
                 });
             })
-    }
-    else if (req.params.sId) {
-        var query = Cart.find({"owner": { "$eq" : req.user._id } })
-        query
-            .exec(function(error, cart) {
-                if(error) {
-                    console.log(error);
-                }
-                console.log(cart);
-
-                var elementPrice;
-                var seats =[];
-                cart[0].reservations.forEach(element => {
-                    if (element.cart_id == req.body._id) {
-                        console.log("find it");
-                        seats = element.seats;
-                        elementPrice = element.price;
-                        console.log("Seats:");
-                        console.log(seats);
-                    }
-                })
-
-                Cart.update({
-                   owner: req.user._id
-                },{
-                    $inc: { total: -seats.length * elementPrice },
-                    $pull: { reservations: {cart_id: req.body._id } }
-                },function(error, cart) {
-                    if (error) {
-                        console.log(error);
-                    }
-                    console.log("Delete reservation from cart!");
-                    return res.status(200).json({
-                        message: "Deleted!"
-                    });
-                }) 
-            }) 
     }
     else if (res.locals.bookedReservations) {
         var query = Cart.find({"owner": { "$eq" : req.user._id } })
