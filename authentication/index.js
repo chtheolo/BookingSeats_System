@@ -60,7 +60,8 @@ exports.register = function (req, res, next) {
 		});
 
 		/** When user registration complete successfully, then create a cart which belongs to him. */
-		return next(Cart.create(user));
+		res.locals.user = user;
+		return next();
 	});
 }
 
