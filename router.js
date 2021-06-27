@@ -67,7 +67,7 @@ module.exports = function (app) {
 	/* 		auth			*/
 	routes.api.use('/auth', routes.auth);
 	routes.auth
-		.post('/register', controllers.auth.register)//, controllers.cart.create)
+		.post('/register', controllers.auth.register, controllers.cart.create)
 		.post('/login', requireLogin, controllers.auth.login)
 
 
