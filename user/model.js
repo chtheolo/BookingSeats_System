@@ -16,14 +16,8 @@ const UserSchema = new Schema({
 		// phone: { type: String, unique: true, required: false},
 		// address: String,
 		// dob: Date,
-
-		// job: String,
-		// ar_mitrooy_OSDE: String,
-		// afm: String,
 	},
 	// isVerified: { type: Boolean, default: false },
-	// mobile_token: String,
-	// db_project: [String],
 	role: { type: String, enum: ['Member', 'Admin'], default: 'Member' },
 	resetPasswordToken: String,
 	resetPasswordExpires: Date
