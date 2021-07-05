@@ -11,9 +11,8 @@ const app = express();
 var localLogin;
 
 
-localLogin = new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-    console.log(email);
-    User.findOne({ $or : [ { email: email }, { username : email }] }, (err, user) => {
+localLogin = new LocalStrategy({usernameField: 'email_username'}, (email_username, password, done) => {
+    User.findOne({ $or : [ { email: email_username }, { username : email_username }] }, (err, user) => {
         if(err)
             return done(err);
         if(!user)
