@@ -215,10 +215,9 @@ exports.delete = function(req, res, next){
 	}
 	else if (res.locals.bookedReservations) {
 		res.locals.bookedReservations.forEach(element => {
-			Sessions.update({
+			Sessions.updateOne({
 				"_id": {"$eq": element.sessionID }
 			},{
-				$inc: { seatsAvailable: + element.seats.length },
 				$pull: {
 					reservations: {seats: element.seats }
 				}
