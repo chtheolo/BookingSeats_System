@@ -87,7 +87,7 @@ exports.fetch = function(req,res){
 			console.log("create!");
 
 			let session = new Sessions({
-				name: "Rivera",
+				name: "Shop-Restaurant",
 				date: req.query.date,
 				price: 9,
 				seatsAvailable: 113,
