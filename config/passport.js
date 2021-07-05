@@ -10,46 +10,26 @@ const express = require('express')
 const app = express();
 var localLogin;
 
-if(app.get('env').includes('production')){
-    console.log("Username auth")
-    localLogin = new LocalStrategy((username, password, done) => {
-        User.findOne({ username: username }, (err, user) => {
+
+localLogin = new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
+    console.log(email);
+    User.findOne({ $or : [ { email: email }, { username : email }] }, (err, user) => {
+        if(err)
+            return done(err);
+        if(!user)
+            return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
+
+        user.comparePassword(password, (err, isMatch) => {
             if(err)
                 return done(err);
-            if(!user)
+            if(!isMatch)
                 return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
 
-            user.comparePassword(password, (err, isMatch) => {
-                if(err)
-                    return done(err);
-                if(!isMatch)
-                    return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
-
-                return done(null, user);
-            });
+            return done(null, user);
         });
     });
-}
-else{
-    console.log("Email auth")
-    localLogin = new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-        User.findOne({ email: email }, (err, user) => {
-            if(err)
-                return done(err);
-            if(!user)
-                return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
+});
 
-            user.comparePassword(password, (err, isMatch) => {
-                if(err)
-                    return done(err);
-                if(!isMatch)
-                    return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
-
-                return done(null, user);
-            });
-        });
-    });
-}
 
 // Setting up JWT login strategy
 const jwtOptions = {
